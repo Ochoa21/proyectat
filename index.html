@@ -1,136 +1,192 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>PROYECTA-T</title>
-  <link rel="icon" type="image/png" href="unnamed.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="unnamed.png" />
+  <link rel="stylesheet" href="style.css" />
+  <!-- Recomendado para despliegue: define CSP por cabeceras del servidor -->
+  <!--
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'self'; img-src 'self' data:; style-src 'self'; script-src 'self'; base-uri 'self'; frame-ancestors 'none'">
+  -->
 </head>
 <body data-theme="default">
   <!-- Background decorative elements -->
-  <div class="bg-shapes">
+  <div class="bg-shapes" aria-hidden="true">
     <div class="shape shape-1"></div>
     <div class="shape shape-2"></div>
     <div class="shape shape-3"></div>
     <div class="shape shape-4"></div>
   </div>
 
-
-
   <!-- Navbar -->
   <header>
     <h1>PROYECTA-T</h1>
-    <nav>
-  <!-- Test Vocacional → Google Forms -->
-  <a href="https://docs.google.com/forms/u/1/">Test Vocacional</a>
+    <nav aria-label="Navegación principal">
+      <a href="https://docs.google.com/forms/u/1/">Test Vocacional</a>
+      <a href="https://capacitateparaelempleo.org/cursos">Cursos</a>
+      <a href="https://co.computrabajo.com/">Empleos</a>
+      <a href="https://portal.icetex.gov.co/Portal/">Becas</a>
+      <a href="https://www.linkedin.com/">Historias</a>
 
-  <!-- Cursos → Coursera -->
-  <a href="https://capacitateparaelempleo.org/cursos">Cursos</a>
-
-  <!-- Empleos → Computrabajo -->
-  <a href="https://co.computrabajo.com/">Empleos</a>
-
-  <!-- Becas → ICETEX -->
-  <a href="https://portal.icetex.gov.co/Portal/">Becas</a>
-
-  <!-- Historias → LinkedIn (ejemplo de testimonios de jóvenes) -->
-  <a href="https://www.linkedin.com/">Historias</a>
-  
-  <!-- boton de inicio y cerrar sesion -->
-  <button id="loginBtn" class="login-btn" onclick="toggleLoginModal()">Iniciar Sesión</button>
-  <button id="logoutBtn" class="logout-btn" onclick="logout()" style="display: none;">Cerrar Sesión</button>
-
-  <!-- panel de administrador -->
-  <button id="adminBtn" class="admin-btn" onclick="showAdminPanel()" style="display: none;">👥 Panel Admin</button>
-</nav>
+      <button id="loginBtn" class="login-btn" onclick="toggleLoginModal()" aria-haspopup="dialog" aria-controls="loginModal">
+        Iniciar Sesión
+      </button>
+      <button id="logoutBtn" class="logout-btn" onclick="logout()" style="display:none">
+        Cerrar Sesión
+      </button>
+      <button id="adminBtn" class="admin-btn" onclick="showAdminPanel()" style="display:none" aria-haspopup="dialog" aria-controls="adminModal">
+        👥 Panel Admin
+      </button>
+    </nav>
   </header>
 
   <!-- Hero -->
   <section class="hero">
     <h2>Descubre tu camino, construye tu futuro</h2>
     <button class="btn" onclick="mostrarMensaje()">🚀 Realiza tu Test</button>
-    
-    <!-- ...existing code... -->
   </section>
 
   <!-- Cursos -->
-  <section id="cursos">
-    <h3>Cursos y Talleres</h3>
-    <div class="cards">
-      <div class="card">💻 Curso de Programación</div>
-      <div class="card">🎨 Taller de Diseño Gráfico</div>
-      <div class="card">📊 Curso de Emprendimiento</div>
+  <section id="cursos" aria-labelledby="cursos-title">
+    <h3 id="cursos-title">Cursos y Talleres</h3>
+    <div class="cards" role="list">
+      <div class="card" role="listitem">💻 Curso de Programación</div>
+      <div class="card" role="listitem">🎨 Taller de Diseño Gráfico</div>
+      <div class="card" role="listitem">📊 Curso de Emprendimiento</div>
     </div>
   </section>
 
   <!-- Login Modal -->
-  <div id="loginModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeLoginModal()">&times;</span>
-      <h2>Iniciar Sesión</h2>
-      <form id="loginForm" onsubmit="handleLogin(event)">
+  <div id="loginModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="loginModalTitle" aria-describedby="loginModalDesc" style="display:none">
+    <div class="modal-content" tabindex="-1">
+      <button class="close" onclick="closeLoginModal()" aria-label="Cerrar diálogo">&times;</button>
+      <h2 id="loginModalTitle">Iniciar Sesión</h2>
+      <p id="loginModalDesc" class="sr-only">Formulario para iniciar sesión, registrarse o recuperar contraseña.</p>
+
+      <!-- Login -->
+      <form id="loginForm" onsubmit="handleLogin(event)" novalidate>
         <div class="form-group">
-          <label for="email">Correo Electrónico:</label>
-          <input type="email" id="email" name="email" required>
+          <label for="email">Correo Electrónico</label>
+          <input type="email" id="email" name="email" inputmode="email" autocomplete="email" required aria-describedby="emailHelp" />
+          <small id="emailHelp" class="form-hint">Ejemplo: nombre@dominio.com</small>
+          <div id="emailError" class="form-error" aria-live="polite"></div>
         </div>
         <div class="form-group">
-          <label for="password">Contraseña:</label>
-          <input type="password" id="password" name="password" required>
+          <label for="password">Contraseña</label>
+          <div class="password-field">
+            <input type="password" id="password" name="password" autocomplete="current-password" required />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">👁️</button>
+          </div>
+          <div id="passwordError" class="form-error" aria-live="polite"></div>
         </div>
         <button type="submit" class="btn-login">Iniciar Sesión</button>
+        <p class="forgot-link">
+          <a href="#" onclick="showForgotForm();return false;">¿Olvidaste tu contraseña?</a>
+        </p>
         <p class="register-link">
-          ¿No tienes cuenta? <a href="#" onclick="showRegisterForm()">Regístrate aquí</a>
+          ¿No tienes cuenta?
+          <a href="#" onclick="showRegisterForm();return false;" aria-controls="registerForm">Regístrate aquí</a>
         </p>
       </form>
-      
-      <!-- Register Form -->
-      <form id="registerForm" onsubmit="handleRegister(event)" style="display: none;">
+
+      <!-- Registro -->
+      <form id="registerForm" onsubmit="handleRegister(event)" style="display:none" novalidate>
         <div class="form-group">
-          <label for="regName">Nombre Completo:</label>
-          <input type="text" id="regName" name="name" required>
+          <label for="regName">Nombre Completo</label>
+          <input type="text" id="regName" name="name" autocomplete="name" required />
+          <div id="regNameError" class="form-error" aria-live="polite"></div>
         </div>
         <div class="form-group">
-          <label for="regEmail">Correo Electrónico:</label>
-          <input type="email" id="regEmail" name="email" required>
+          <label for="regEmail">Correo Electrónico</label>
+          <input type="email" id="regEmail" name="email" inputmode="email" autocomplete="email" required />
+          <div id="regEmailError" class="form-error" aria-live="polite"></div>
         </div>
         <div class="form-group">
-          <label for="regPassword">Contraseña:</label>
-          <input type="password" id="regPassword" name="password" required>
+          <label for="regPassword">Contraseña</label>
+          <div class="password-field">
+            <input type="password" id="regPassword" name="password" autocomplete="new-password" required aria-describedby="pwdRequirements" />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">👁️</button>
+          </div>
+          <small id="pwdRequirements" class="form-hint">Mínimo 6 caracteres.</small>
+          <div id="regPasswordError" class="form-error" aria-live="polite"></div>
         </div>
         <div class="form-group">
-          <label for="regConfirmPassword">Confirmar Contraseña:</label>
-          <input type="password" id="regConfirmPassword" name="confirmPassword" required>
+          <label for="regConfirmPassword">Confirmar Contraseña</label>
+          <div class="password-field">
+            <input type="password" id="regConfirmPassword" name="confirmPassword" autocomplete="new-password" required />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">👁️</button>
+          </div>
+          <div id="regConfirmPasswordError" class="form-error" aria-live="polite"></div>
         </div>
         <button type="submit" class="btn-register">Registrarse</button>
         <p class="login-link">
-          ¿Ya tienes cuenta? <a href="#" onclick="showLoginForm()">Inicia sesión aquí</a>
+          ¿Ya tienes cuenta?
+          <a href="#" onclick="showLoginForm();return false;" aria-controls="loginForm">Inicia sesión aquí</a>
         </p>
+      </form>
+
+      <!-- Recuperar contraseña (paso 1) -->
+      <form id="forgotForm" onsubmit="handleForgot(event)" style="display:none" novalidate>
+        <div class="form-group">
+          <label for="fpEmail">Correo asociado a tu cuenta</label>
+          <input type="email" id="fpEmail" name="fpEmail" inputmode="email" autocomplete="email" required />
+          <div id="fpEmailError" class="form-error" aria-live="polite"></div>
+        </div>
+        <button type="submit" class="btn-login">Continuar</button>
+        <p class="login-link"><a href="#" onclick="showLoginView();return false;">Volver a iniciar sesión</a></p>
+      </form>
+
+      <!-- Restablecer contraseña (paso 2) -->
+      <form id="resetForm" onsubmit="handleReset(event)" style="display:none" novalidate>
+        <div class="form-group">
+          <label for="fpNewPwd">Nueva contraseña</label>
+          <div class="password-field">
+            <input type="password" id="fpNewPwd" name="fpNewPwd" autocomplete="new-password" required />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">👁️</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="fpNewPwd2">Confirmar nueva contraseña</label>
+          <div class="password-field">
+            <input type="password" id="fpNewPwd2" name="fpNewPwd2" autocomplete="new-password" required />
+            <button type="button" class="toggle-visibility" aria-label="Mostrar u ocultar contraseña" onclick="this.previousElementSibling.type = this.previousElementSibling.type === 'password' ? 'text' : 'password'">👁️</button>
+          </div>
+          <div id="fpResetError" class="form-error" aria-live="polite"></div>
+        </div>
+        <button type="submit" class="btn-login">Actualizar contraseña</button>
+        <p class="login-link"><a href="#" onclick="showLoginView();return false;">Volver a iniciar sesión</a></p>
       </form>
     </div>
   </div>
 
   <!-- Admin Panel Modal -->
-  <div id="adminModal" class="modal">
-    <div class="modal-content admin-content">
-      <span class="close" onclick="closeAdminPanel()">&times;</span>
-      <h2>👥 Panel de Administración</h2>
-      <div class="admin-stats">
-        <div class="stat-card">
+  <div id="adminModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="adminModalTitle" aria-describedby="adminModalDesc" style="display:none">
+    <div class="modal-content admin-content" tabindex="-1">
+      <button class="close" onclick="closeAdminPanel()" aria-label="Cerrar diálogo">&times;</button>
+      <h2 id="adminModalTitle">👥 Panel de Administración</h2>
+      <p id="adminModalDesc" class="sr-only">Estadísticas, usuarios y acciones del administrador.</p>
+
+      <div class="admin-stats" role="region" aria-label="Estadísticas">
+        <div class="stat-card" role="group" aria-label="Total usuarios">
           <h3 id="totalUsers">0</h3>
           <p>Total Usuarios</p>
         </div>
-        <div class="stat-card">
+        <div class="stat-card" role="group" aria-label="Usuarios activos">
           <h3 id="activeUsers">0</h3>
           <p>Usuarios Activos</p>
         </div>
       </div>
-      <div class="users-list">
-        <h3>Lista de Usuarios Registrados</h3>
-        <div id="usersTable" class="users-table">
-          <!-- Users will be loaded here -->
-        </div>
+
+      <div class="users-list" role="region" aria-labelledby="usersListTitle">
+        <h3 id="usersListTitle">Lista de Usuarios Registrados</h3>
+        <div id="usersTable" class="users-table"></div>
       </div>
+
+      <div id="adminTools" role="region" aria-label="Herramientas de administración"></div>
+
       <div class="admin-actions">
         <button class="btn-export" onclick="exportUsers()">📊 Exportar Datos</button>
       </div>
@@ -142,7 +198,6 @@
     <p>© 2025 PROYECTA-T | Todos los derechos reservados</p>
   </footer>
 
-  <!-- Enlazamos el JavaScript -->
   <script src="script.js"></script>
 </body>
 </html>
